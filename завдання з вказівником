@@ -1,0 +1,52 @@
+#include <iostream>
+
+
+using namespace std;
+
+int main() {
+
+	
+
+	const int N = 10;
+	int grades[N];
+
+	int* p = grades;
+
+	cout << "Введіть " << N << " оцінок учнів: ";
+	for (p = grades; p < grades + N; p++) {
+		cin >> *p;
+	}
+
+	cout << "Перелік ваших оцінок: ";
+	for (p = grades; p < grades + N; p++) {
+		cout << *p << " ";
+	}
+	cout << endl;
+
+
+	int sum = 0;
+	for (p = grades; p < grades + N; p++) {
+		sum += *p;
+	}
+	cout << "Сума: " << sum << endl;
+	cout << "Ваше середнє: " << (double)sum / N << endl;
+
+
+	int* maxPtr = grades;
+	int* minPtr = grades;
+
+	for (p = grades + 1; p < grades + N; p++) {
+		if (*p > *maxPtr) {
+			maxPtr = p;
+		}
+		if (*p < *minPtr) {
+			minPtr = p;
+		}
+	}
+
+	cout << "Максимум: " << *maxPtr << ", адреса: " << maxPtr << endl;
+	cout << "Мінімум: " << *minPtr << ", адреса: " << minPtr << endl;
+	cout << *p;
+
+	return 0;
+}
