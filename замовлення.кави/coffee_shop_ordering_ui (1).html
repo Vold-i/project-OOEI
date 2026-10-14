@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aroma Craft - Інтерфейс замовлення кави</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        coffee: {
+                            50: '#faf6f0',
+                            100: '#f0e6d6',
+                            200: '#e1cdb2',
+                            300: '#ceae87',
+                            400: '#bc8e5f',
+                            500: '#a6723f',
+                            600: '#8e5b32',
+                            700: '#72462a',
+                            800: '#5c3926',
+                            900: '#4c3021',
+                            950: '#2b1911',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(166, 114, 63, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(166, 114, 63, 0.6);
+        }
+        .animate-bounce-short {
+            animation: bounce 0.4s ease infinite alternate;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-4px); }
+        }
+    </style>
+</head>
+<body class="bg-stone-900 text-stone-100 font-sans min-h-screen flex flex-col antialiased selection:bg-coffee-500 selection:text-white">
+
+    <header class="bg-stone-950/80 backdrop-blur-md border-b border-stone-800 sticky top-0 z-30 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-coffee-700 to-coffee-400 flex items-center justify-center text-white shadow-lg shadow-coffee-900/40">
+                    <i class="fa-solid font-bold fa-mug-hot text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-wide text-stone-100">AROMA CRAFT</h1>
+                    <p class="text-xs text-coffee-400 font-medium tracking-wider uppercase">Кав'ярня & Ростерія</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- C++ Code Viewer Toggle Button -->
+                <button id="cppToggleBtn" onclick="toggleCppPanel()" class="px-3.5 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-xs font-mono text-coffee-300 border border-stone-700/80 transition flex items-center gap-2">
+                    <i class="fa-solid fa-code text-coffee-400"></i>
+                    <span>C++ Backend API</span>
+                </button>
+
+                <!-- Mobile Cart Toggle Trigger -->
+                <button onclick="toggleCartModal()" class="lg:hidden relative p-2 rounded-xl bg-stone-800 text-stone-200 hover:bg-stone-700">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                    <span id="mobileCartBadge" class="hidden absolute -top-1 -right-1 bg-coffee-500 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-stone-900">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- LEFT COLUMN: Menu Categories & Items -->
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <!-- Category Selector Tabs -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar border-b border-stone-800/60">
+                <button onclick="filterCategory('all')" class="cat-btn active px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-coffee-600 text-white shadow-md shadow-coffee-900/20" data-cat="all">
+                    <i class="fa-solid fa-border-all mr-2"></i>Все меню
+                </button>
+                <button onclick="filterCategory('hot')" class="cat-btn px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800" data-cat="hot">
+                    <i class="fa-solid fa-mug-hot mr-2"></i>Гаряча кава
+                </button>
+                <button onclick="filterCategory('cold')" class="cat-btn px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800" data-cat="cold">
+                    <i class="fa-solid fa-snowflake mr-2"></i>Холодна кава
+                </button>
+                <button onclick="filterCategory('tea')" class="cat-btn px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800" data-cat="tea">
+                    <i class="fa-solid fa-leaf mr-2"></i>Чай та Matcha
+                </button>
+                <button onclick="filterCategory('sweets')" class="cat-btn px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all bg-stone-800/80 text-stone-400 hover:text-stone-200 hover:bg-stone-800" data-cat="sweets">
+                    <i class="fa-solid fa-cookie-bite mr-2"></i>Десерти
+                </button>
+            </div>
+
+            <!-- Menu Grid -->
+            <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+                <!-- Menu Items loaded via JavaScript -->
+            </div>
+        </div>
+
+        <aside class="hidden lg:flex flex-col w-96 bg-stone-950 rounded-2xl border border-stone-800/80 p-5 sticky top-24 h-[calc(100vh-7rem)] shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-stone-800">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-receipt text-coffee-400 text-xl"></i>
+                    <h2 class="font-bold text-lg text-stone-100">Ваше замовлення</h2>
+                </div>
+                <button onclick="clearCart()" class="text-xs text-stone-500 hover:text-red-400 transition flex items-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i> Очистити
+                </button>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div id="cartItemsContainer" class="flex-1 overflow-y-auto my-4 pr-1 divide-y divide-stone-800/50">
+                <!-- Empty State -->
+                <div id="emptyCartView" class="h-full flex flex-col items-center justify-center text-center p-6 text-stone-500">
+                    <div class="w-16 h-16 rounded-full bg-stone-900 flex items-center justify-center mb-3 text-stone-600">
+                        <i class="fa-solid fa-mug-saucer text-2xl"></i>
+                    </div>
+                    <p class="font-medium text-stone-400">Кошик порожній</p>
+                    <p class="text-xs mt-1 text-stone-500">Оберіть смачну каву або десерт з меню для початку замовлення</p>
+                </div>
+            </div>
+
+            <!-- Order Summary Section -->
+            <div class="pt-4 border-t border-stone-800 bg-stone-950 space-y-3">
+                <div class="space-y-1.5 text-xs text-stone-400">
+                    <div class="flex justify-between">
+                        <span>Проміжний підсумок</span>
+                        <span id="subtotalPrice" class="font-mono text-stone-200">0.00 ₴</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>ПДВ (20%)</span>
+                        <span id="taxPrice" class="font-mono text-stone-200">0.00 ₴</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-baseline pt-2 border-t border-stone-800/80">
+                    <span class="font-bold text-stone-200 text-sm">До сплати</span>
+                    <span id="totalPrice" class="font-bold text-xl text-coffee-400 font-mono">0.00 ₴</span>
+                </div>
+
+                <button id="checkoutBtn" disabled onclick="openCheckoutModal()" class="w-full py-3.5 px-4 rounded-xl font-bold text-white bg-coffee-600 hover:bg-coffee-500 disabled:bg-stone-800 disabled:text-stone-600 disabled:cursor-not-allowed transition shadow-lg shadow-coffee-950 flex items-center justify-center gap-2">
+                    <span>Оформити замовлення</span>
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </div>
+        </aside>
+
+    </main>
+
+    <div id="customizationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
+            
+            <!-- Modal Header -->
+            <div class="relative h-48 bg-stone-800 flex items-end p-6 bg-cover bg-center" id="modalHeaderBg">
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent"></div>
+                <button onclick="closeCustomizationModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-stone-900/80 text-stone-300 hover:text-white flex items-center justify-center backdrop-blur-md">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="relative z-10">
+                    <span id="modalCategoryBadge" class="text-[10px] font-bold tracking-wider uppercase bg-coffee-600/90 text-white px-2.5 py-0.5 rounded-full">Гаряча кава</span>
+                    <h3 id="modalTitle" class="text-2xl font-bold text-white mt-1">Капучино</h3>
+                </div>
+            </div>
+
+            <!-- Options Form Scrollable Content -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm">
+                
+                <!-- Size Selector -->
+                <div id="sizeSection">
+                    <label class="block font-semibold text-stone-300 mb-2.5">1. Оберіть розмір</label>
+                    <div class="grid grid-cols-3 gap-3" id="sizeOptions">
+                        <!-- JS populated sizes -->
+                    </div>
+                </div>
+
+                <!-- Milk Options -->
+                <div id="milkSection">
+                    <label class="block font-semibold text-stone-300 mb-2.5">2. Тип молока</label>
+                    <div class="grid grid-cols-2 gap-2.5" id="milkOptions">
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-coffee-600/50 transition">
+                            <div class="flex items-center gap-2.5">
+                                <input type="radio" name="milk" value="Звичайне" checked class="accent-coffee-500">
+                                <span class="text-stone-200">Звичайне коров'яче</span>
+                            </div>
+                            <span class="text-xs text-stone-500">+0 ₴</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-coffee-600/50 transition">
+                            <div class="flex items-center gap-2.5">
+                                <input type="radio" name="milk" value="Безлактозне" class="accent-coffee-500">
+                                <span class="text-stone-200">Безлактозне</span>
+                            </div>
+                            <span class="text-xs text-stone-400 font-mono">+15 ₴</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-coffee-600/50 transition">
+                            <div class="flex items-center gap-2.5">
+                                <input type="radio" name="milk" value="Вівсяне" class="accent-coffee-500">
+                                <span class="text-stone-200">Вівсяне (Рослинне)</span>
+                            </div>
+                            <span class="text-xs text-stone-400 font-mono">+25 ₴</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-coffee-600/50 transition">
+                            <div class="flex items-center gap-2.5">
+                                <input type="radio" name="milk" value="Мигдалеве" class="accent-coffee-500">
+                                <span class="text-stone-200">Мигдалеве</span>
+                            </div>
+                            <span class="text-xs text-stone-400 font-mono">+25 ₴</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sugar Level -->
+                <div id="sugarSection">
+                    <label class="block font-semibold text-stone-300 mb-2.5">3. Рівень цукру</label>
+                    <div class="grid grid-cols-4 gap-2 text-center" id="sugarOptions">
+                        <button type="button" onclick="selectSugar(0)" class="sugar-btn p-2.5 rounded-xl border border-stone-800 bg-stone-950/60 hover:bg-stone-800 font-medium transition text-stone-300 active border-coffee-500 bg-coffee-950/30">Без цукру</button>
+                        <button type="button" onclick="selectSugar(1)" class="sugar-btn p-2.5 rounded-xl border border-stone-800 bg-stone-950/60 hover:bg-stone-800 font-medium transition text-stone-300">1 ложка</button>
+                        <button type="button" onclick="selectSugar(2)" class="sugar-btn p-2.5 rounded-xl border border-stone-800 bg-stone-950/60 hover:bg-stone-800 font-medium transition text-stone-300">2 ложки</button>
+                        <button type="button" onclick="selectSugar(3)" class="sugar-btn p-2.5 rounded-xl border border-stone-800 bg-stone-950/60 hover:bg-stone-800 font-medium transition text-stone-300">3 ложки</button>
+                    </div>
+                </div>
+
+                <!-- Syrups and Addons -->
+                <div id="syrupSection">
+                    <label class="block font-semibold text-stone-300 mb-2.5">4. Додаткові сиропи та топінги</label>
+                    <div class="space-y-2" id="syrupOptions">
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-stone-700">
+                            <span class="flex items-center gap-2 text-stone-200">
+                                <input type="checkbox" value="Ванільний сироп" data-price="15" class="syrup-checkbox rounded bg-stone-900 border-stone-700 text-coffee-600 focus:ring-0">
+                                Ванільний сироп
+                            </span>
+                            <span class="text-xs font-mono text-stone-400">+15 ₴</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-stone-700">
+                            <span class="flex items-center gap-2 text-stone-200">
+                                <input type="checkbox" value="Солона карамель" data-price="15" class="syrup-checkbox rounded bg-stone-900 border-stone-700 text-coffee-600 focus:ring-0">
+                                Солона карамель
+                            </span>
+                            <span class="text-xs font-mono text-stone-400">+15 ₴</span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950/60 cursor-pointer hover:border-stone-700">
+                            <span class="flex items-center gap-2 text-stone-200">
+                                <input type="checkbox" value="Збиті вершки" data-price="20" class="syrup-checkbox rounded bg-stone-900 border-stone-700 text-coffee-600 focus:ring-0">
+                                Збиті вершки
+                            </span>
+                            <span class="text-xs font-mono text-stone-400">+20 ₴</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-5 border-t border-stone-800 bg-stone-950 flex items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs text-stone-400 block">Підсумок напою</span>
+                    <span id="modalCalculatedPrice" class="text-2xl font-bold text-coffee-400 font-mono">0.00 ₴</span>
+                </div>
+                <button onclick="addCustomizedItemToCart()" class="flex-1 py-3 px-5 rounded-xl bg-coffee-600 hover:bg-coffee-500 font-bold text-white transition flex items-center justify-center gap-2 shadow-lg shadow-coffee-950">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Додати до замовлення</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="checkoutModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl p-6 relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-stone-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <h3 class="text-xl font-bold text-stone-100 mb-1">Деталі замовлення</h3>
+            <p class="text-xs text-stone-400 mb-5">Заповніть останні деталі для відправки замовлення бариста</p>
+
+            <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="space-y-4 text-sm">
+                <!-- Order Type -->
+                <div>
+                    <label class="block text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Формат замовлення</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-stone-800 bg-stone-950 cursor-pointer hover:border-coffee-600 transition">
+                            <input type="radio" name="orderType" value="takeaway" checked class="accent-coffee-500" onchange="toggleTableInput(false)">
+                            <i class="fa-solid fa-bag-shopping text-coffee-400"></i>
+                            <span class="text-stone-200 font-medium">З собою</span>
+                        </label>
+                        <label class="flex items-center justify-center gap-2 p-3 rounded-xl border border-stone-800 bg-stone-950 cursor-pointer hover:border-coffee-600 transition">
+                            <input type="radio" name="orderType" value="dinein" class="accent-coffee-500" onchange="toggleTableInput(true)">
+                            <i class="fa-solid fa-chair text-coffee-400"></i>
+                            <span class="text-stone-200 font-medium">В закладі</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Table Number -->
+                <div id="tableNumContainer" class="hidden">
+                    <label class="block text-xs font-semibold text-stone-400 mb-1">Номер столика</label>
+                    <input type="number" id="tableNumberInput" placeholder="Наприклад: 4" min="1" max="30" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-stone-100 focus:outline-none focus:border-coffee-500">
+                </div>
+
+                <!-- Customer Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-stone-400 mb-1">Ваше ім'я (для виклику)</label>
+                    <input type="text" required id="customerName" placeholder="Олександр" class="w-full bg-stone-950 border border-stone-800 rounded-xl px-4 py-2.5 text-stone-100 focus:outline-none focus:border-coffee-500">
+                </div>
+
+                <!-- Payment Method -->
+                <div>
+                    <label class="block text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Спосіб оплати</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950 cursor-pointer hover:border-stone-700">
+                            <span class="flex items-center gap-2 text-stone-200">
+                                <input type="radio" name="payment" value="card" checked class="accent-coffee-500">
+                                <i class="fa-regular fa-credit-card text-coffee-400"></i> Карткою бариста
+                            </span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950 cursor-pointer hover:border-stone-700">
+                            <span class="flex items-center gap-2 text-stone-200">
+                                <input type="radio" name="payment" value="applepay" class="accent-coffee-500">
+                                <i class="fa-brands fa-apple text-lg"></i> Apple Pay / Google Pay
+                            </span>
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-xl border border-stone-800 bg-stone-950 cursor-pointer hover:border-stone-700">
+                            <span class="flex items-center gap-2 text-stone-200">
+                                <input type="radio" name="payment" value="cash" class="accent-coffee-500">
+                                <i class="fa-solid fa-money-bill-wave text-green-500"></i> Готівкою
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Final Submit -->
+                <div class="pt-3">
+                    <button type="submit" class="w-full py-3.5 rounded-xl font-bold text-white bg-coffee-600 hover:bg-coffee-500 transition shadow-lg shadow-coffee-950 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Підтвердити замовлення</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-stone-900 border border-stone-800 rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-coffee-900/40 border border-coffee-500/30 text-coffee-400 flex items-center justify-center mx-auto mb-4 text-2xl animate-bounce-short">
+                <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            <h3 class="text-xl font-bold text-stone-100">Замовлення прийнято!</h3>
+            <p class="text-xs text-stone-400 mt-1">№ Замовлення: <span id="orderIdDisplay" class="font-mono text-coffee-400 font-bold">#4829</span></p>
+            
+            <p class="text-sm text-stone-300 my-4 bg-stone-950 p-3 rounded-xl border border-stone-800">
+                Дякуємо, <span id="placedName" class="font-bold"></span>! Бариста вже готує вашу каву. Очікуйте виклику.
+            </p>
+
+            <button onclick="resetApp()" class="w-full py-3 rounded-xl font-semibold bg-stone-800 hover:bg-stone-700 text-stone-200 transition text-sm">
+                Зробити ще одне замовлення
+            </button>
+        </div>
+    </div>
+
+    <div id="cppDrawer" class="fixed inset-y-0 right-0 w-full max-w-lg bg-stone-950 border-l border-stone-800 z-50 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
+        <div class="p-4 border-b border-stone-800 flex items-center justify-between bg-stone-900">
+            <div class="flex items-center gap-2 text-coffee-400 font-mono text-sm font-bold">
+                <i class="fa-solid fa-code"></i>
+                <span>C++ Backend Architecture Sync</span>
+            </div>
+            <button onclick="toggleCppPanel()" class="text-stone-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+        
+        <div class="p-5 overflow-y-auto space-y-6 font-mono text-xs flex-1">
+            <div>
+                <h4 class="text-stone-300 font-sans font-bold text-sm mb-2 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                    Сгенерований JSON payload для C++ сервера:
+                </h4>
+                <p class="text-stone-500 text-[11px] font-sans mb-2">Цей об'єкт відправляється методом POST на ваш C++ HTTP REST API (Crow/Drogon/Pistache):</p>
+                <pre id="jsonPreview" class="bg-stone-900 border border-stone-800 rounded-xl p-4 text-emerald-400 overflow-x-auto">
+{
+  "cart_is_empty": true
+}
+                </pre>
+            </div>
+
+            <div>
+                <h4 class="text-stone-300 font-sans font-bold text-sm mb-2">Приклад C++ Структур (Data Models):</h4>
+                <pre class="bg-stone-900 border border-stone-800 rounded-xl p-4 text-coffee-300 overflow-x-auto">
+<span class="text-purple-400">#include</span> <span class="text-green-400">&lt;string&gt;</span>
+<span class="text-purple-400">#include</span> <span class="text-green-400">&lt;vector&gt;</span>
+
+<span class="text-blue-400">struct</span> <span class="text-yellow-300">Customization</span> {
+    std::string size;        <span class="text-stone-500">// "S", "M", "L"</span>
+    std::string milk_type;   <span class="text-stone-500">// "Oat", "Almond", "Normal"</span>
+    <span class="text-blue-400">int</span> sugar_cubes;        <span class="text-stone-500">// 0, 1, 2, 3</span>
+    std::vector&lt;std::string&gt; syrups;
+};
+
+<span class="text-blue-400">struct</span> <span class="text-yellow-300">OrderItem</span> {
+    <span class="text-blue-400">int</span> item_id;
+    std::string name;
+    <span class="text-blue-400">double</span> unit_price;
+    <span class="text-blue-400">int</span> quantity;
+    Customization options;
+};
+
+<span class="text-blue-400">struct</span> <span class="text-yellow-300">CoffeeOrderPayload</span> {
+    <span class="text-blue-400">int</span> order_id;
+    std::string customer_name;
+    std::string order_type;  <span class="text-stone-500">// "takeaway" / "dinein"</span>
+    <span class="text-blue-400">int</span> table_number;
+    std::string payment_method;
+    <span class="text-blue-400">double</span> total_price_uah;
+    std::vector&lt;OrderItem&gt; cart_items;
+};
+                </pre>
+            </div>
+        </div>
+
+        <div class="p-4 border-t border-stone-800 bg-stone-900 text-stone-400 text-xs font-sans">
+            💡 Зміни в кошику автоматично оновлюють JSON-структуру вище.
+        </div>
+    </div>
+
+    <script>
+        // High Quality Checked Coffee & Pastry Image URLs from Unsplash
+        const MENU_ITEMS = [
+            {
+                id: 1,
+                name: "Еспресо",
+                category: "hot",
+                basePrice: 45,
+                image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80",
+                description: "Насичений подвійний еспресо зі щільною оксамитовою кремою.",
+                hasMilk: false,
+                sizes: [
+                    { label: "Стандарт (30мл)", code: "S", extra: 0 }
+                ]
+            },
+            {
+                id: 2,
+                name: "Американо",
+                category: "hot",
+                basePrice: 50,
+                image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80",
+                description: "Класичний порційний еспресо з додаванням гарячої води для м'якого смаку.",
+                hasMilk: false,
+                sizes: [
+                    { label: "S (180мл)", code: "S", extra: 0 },
+                    { label: "M (280мл)", code: "M", extra: 10 }
+                ]
+            },
+            {
+                id: 3,
+                name: "Капучино",
+                category: "hot",
+                basePrice: 65,
+                image: "https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80",
+                description: "Ідеальний баланс порції еспресо, збитого молока та шовковистої пінки.",
+                hasMilk: true,
+                sizes: [
+                    { label: "S (200мл)", code: "S", extra: 0 },
+                    { label: "M (300мл)", code: "M", extra: 15 },
+                    { label: "L (400мл)", code: "L", extra: 25 }
+                ]
+            },
+            {
+                id: 4,
+                name: "Лате Макіато",
+                category: "hot",
+                basePrice: 70,
+                image: "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?auto=format&fit=crop&w=600&q=80",
+                description: "Ніжний тришаровий кавовий напій з підвищеним вмістом збитого молока.",
+                hasMilk: true,
+                sizes: [
+                    { label: "M (300мл)", code: "M", extra: 0 },
+                    { label: "L (450мл)", code: "L", extra: 20 }
+                ]
+            },
+            {
+                id: 5,
+                name: "Флет Уайт",
+                category: "hot",
+                basePrice: 80,
+                image: "https://images.unsplash.com/photo-1577968897966-3d4325b36b61?auto=format&fit=crop&w=600&q=80",
+                description: "Подвійний доппіо з тонким шаром ніжне гаряче молоко для вираженого смаку кави.",
+                hasMilk: true,
+                sizes: [
+                    { label: "Стандарт (220мл)", code: "S", extra: 0 }
+                ]
+            },
+            {
+                id: 6,
+                name: "Cold Brew Нітро",
+                category: "cold",
+                basePrice: 85,
+                image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80",
+                description: "Кава холодної екстракції протягом 18 годин з неймовірно м'яким смаком.",
+                hasMilk: false,
+                sizes: [
+                    { label: "M (300мл)", code: "M", extra: 0 },
+                    { label: "L (400мл)", code: "L", extra: 20 }
+                ]
+            },
+            {
+                id: 7,
+                name: "Айс Лате з льодом",
+                category: "cold",
+                basePrice: 75,
+                image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80",
+                description: "Освіжаючий кавовий напій на основі еспресо, прохолодного молока та кубиків льоду.",
+                hasMilk: true,
+                sizes: [
+                    { label: "M (350мл)", code: "M", extra: 0 },
+                    { label: "L (500мл)", code: "L", extra: 20 }
+                ]
+            },
+            {
+                id: 8,
+                name: "Японський Matcha Latte",
+                category: "tea",
+                basePrice: 90,
+                image: "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&w=600&q=80",
+                description: "Зелений чай матча найвищого сорту з органічним збитим молоком.",
+                hasMilk: true,
+                sizes: [
+                    { label: "M (300мл)", code: "M", extra: 0 },
+                    { label: "L (400мл)", code: "L", extra: 20 }
+                ]
+            },
+            {
+                id: 9,
+                name: "Круасан з мигдалем",
+                category: "sweets",
+                basePrice: 90,
+                image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=600&q=80",
+                description: "Хрусткий масляний круасан з французьким мигдалевим кремом франжипан.",
+                isFood: true
+            },
+            {
+                id: 10,
+                name: "Чізкейк Нью-Йорк",
+                category: "sweets",
+                basePrice: 110,
+                image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=600&q=80",
+                description: "Ніжний класичний вершково-сирний десерт на хрусткій пісочній основі.",
+                isFood: true
+            }
+        ];
+
+        let cart = [];
+        let currentCustomizingItem = null;
+        let selectedSizeExtra = 0;
+        let selectedSizeCode = "S";
+        let selectedSugarCubes = 0;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMenu('all');
+            updateCartUI();
+        });
+
+        function renderMenu(category) {
+            const grid = document.getElementById('menuGrid');
+            grid.innerHTML = '';
+
+            const filtered = category === 'all' 
+                ? MENU_ITEMS 
+                : MENU_ITEMS.filter(item => item.category === category);
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-stone-950 border border-stone-800/80 rounded-2xl overflow-hidden hover:border-coffee-600/50 transition-all duration-300 flex flex-col group shadow-lg";
+                
+                card.innerHTML = `
+                    <div class="relative h-48 overflow-hidden bg-stone-900">
+                        <img src="${item.image}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent"></div>
+                        <span class="absolute bottom-3 right-3 font-mono font-bold text-coffee-300 bg-stone-900/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-sm border border-stone-800">
+                            від ${item.basePrice} ₴
+                        </span>
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-stone-100 text-lg group-hover:text-coffee-400 transition-colors">${item.name}</h3>
+                            <p class="text-xs text-stone-400 mt-1 line-clamp-2 leading-relaxed">${item.description}</p>
+                        </div>
+                        <button onclick="openCustomizationModal(${item.id})" class="mt-4 w-full py-2.5 px-3 rounded-xl bg-stone-900 hover:bg-coffee-600 hover:text-white border border-stone-800 hover:border-coffee-600 text-stone-300 font-semibold text-xs transition flex items-center justify-center gap-2">
+                            <span>${item.isFood ? 'Додати у кошик' : 'Налаштувати та додати'}</span>
+                            <i class="fa-solid ${item.isFood ? 'fa-cart-plus' : 'fa-sliders'}"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if(btn.dataset.cat === cat) {
+                    btn.classList.add('bg-coffee-600', 'text-white', 'shadow-md');
+                    btn.classList.remove('bg-stone-800/80', 'text-stone-400');
+                } else {
+                    btn.classList.remove('bg-coffee-600', 'text-white', 'shadow-md');
+                    btn.classList.add('bg-stone-800/80', 'text-stone-400');
+                }
+            });
+            renderMenu(cat);
+        }
+
+        function openCustomizationModal(itemId) {
+            const item = MENU_ITEMS.find(i => i.id === itemId);
+            if (!item) return;
+
+            currentCustomizingItem = item;
+            selectedSugarCubes = 0;
+
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalCategoryBadge').innerText = item.isFood ? 'Десерт' : 'Напій';
+            document.getElementById('modalHeaderBg').style.backgroundImage = `url('${item.image}')`;
+
+            const sizeSection = document.getElementById('sizeSection');
+            const milkSection = document.getElementById('milkSection');
+            const sugarSection = document.getElementById('sugarSection');
+            const syrupSection = document.getElementById('syrupSection');
+
+            if (item.isFood) {
+                sizeSection.classList.add('hidden');
+                milkSection.classList.add('hidden');
+                sugarSection.classList.add('hidden');
+                syrupSection.classList.add('hidden');
+                selectedSizeExtra = 0;
+                selectedSizeCode = "1 порція";
+            } else {
+                sizeSection.classList.remove('hidden');
+                milkSection.classList.toggle('hidden', !item.hasMilk);
+                sugarSection.classList.remove('hidden');
+                syrupSection.classList.remove('hidden');
+
+                const sizeContainer = document.getElementById('sizeOptions');
+                sizeContainer.innerHTML = '';
+                item.sizes.forEach((s, idx) => {
+                    if (idx === 0) {
+                        selectedSizeExtra = s.extra;
+                        selectedSizeCode = s.code;
+                    }
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = `size-btn p-3 rounded-xl border transition text-center ${idx === 0 ? 'border-coffee-500 bg-coffee-950/40 text-stone-100 font-bold' : 'border-stone-800 bg-stone-950/60 text-stone-400'}`;
+                    btn.innerHTML = `<div class="text-sm font-semibold">${s.label}</div><div class="text-[10px] text-stone-500 mt-0.5">${s.extra > 0 ? '+' + s.extra + ' ₴' : 'Базова'}</div>`;
+                    btn.onclick = () => selectSize(btn, s.extra, s.code);
+                    sizeContainer.appendChild(btn);
+                });
+            }
+
+            document.querySelectorAll('#milkOptions input').forEach((r, idx) => r.checked = idx === 0);
+            document.querySelectorAll('.syrup-checkbox').forEach(cb => cb.checked = false);
+            selectSugar(0);
+
+            recalculateModalPrice();
+
+            const modal = document.getElementById('customizationModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.remove('scale-95');
+        }
+
+        function closeCustomizationModal() {
+            const modal = document.getElementById('customizationModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('div').classList.add('scale-95');
+        }
+
+        function selectSize(btnElement, extraPrice, code) {
+            document.querySelectorAll('.size-btn').forEach(b => {
+                b.classList.remove('border-coffee-500', 'bg-coffee-950/40', 'text-stone-100', 'font-bold');
+                b.classList.add('border-stone-800', 'bg-stone-950/60', 'text-stone-400');
+            });
+            btnElement.classList.add('border-coffee-500', 'bg-coffee-950/40', 'text-stone-100', 'font-bold');
+            btnElement.classList.remove('border-stone-800', 'bg-stone-950/60', 'text-stone-400');
+            selectedSizeExtra = extraPrice;
+            selectedSizeCode = code;
+            recalculateModalPrice();
+        }
+
+        function selectSugar(cubes) {
+            selectedSugarCubes = cubes;
+            document.querySelectorAll('.sugar-btn').forEach((btn, idx) => {
+                if (idx === cubes) {
+                    btn.classList.add('border-coffee-500', 'bg-coffee-950/30', 'text-stone-100', 'font-bold');
+                    btn.classList.remove('border-stone-800', 'text-stone-300');
+                } else {
+                    btn.classList.remove('border-coffee-500', 'bg-coffee-950/30', 'text-stone-100', 'font-bold');
+                    btn.classList.add('border-stone-800', 'text-stone-300');
+                }
+            });
+        }
+
+        function recalculateModalPrice() {
+            if (!currentCustomizingItem) return 0;
+
+            let price = currentCustomizingItem.basePrice + selectedSizeExtra;
+
+            if (!currentCustomizingItem.isFood && currentCustomizingItem.hasMilk) {
+                const selectedMilk = document.querySelector('input[name="milk"]:checked');
+                if (selectedMilk) {
+                    if (selectedMilk.value === "Безлактозне") price += 15;
+                    if (selectedMilk.value === "Вівсяне" || selectedMilk.value === "Мигдалеве") price += 25;
+                }
+            }
+
+            if (!currentCustomizingItem.isFood) {
+                document.querySelectorAll('.syrup-checkbox:checked').forEach(cb => {
+                    price += parseFloat(cb.dataset.price || 0);
+                });
+            }
+
+            document.getElementById('modalCalculatedPrice').innerText = price.toFixed(2) + ' ₴';
+            return price;
+        }
+
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'milk' || e.target.classList.contains('syrup-checkbox')) {
+                recalculateModalPrice();
+            }
+        });
+
+        function addCustomizedItemToCart() {
+            if (!currentCustomizingItem) return;
+
+            const unitPrice = recalculateModalPrice();
+            const syrups = Array.from(document.querySelectorAll('.syrup-checkbox:checked')).map(cb => cb.value);
+            const milkInput = document.querySelector('input[name="milk"]:checked');
+
+            const cartEntry = {
+                cartItemId: Date.now(),
+                itemId: currentCustomizingItem.id,
+                title: currentCustomizingItem.name,
+                unitPrice: unitPrice,
+                quantity: 1,
+                options: {
+                    size: selectedSizeCode,
+                    milk: currentCustomizingItem.hasMilk ? (milkInput ? milkInput.value : 'Звичайне') : 'Немає',
+                    sugar: selectedSugarCubes,
+                    syrups: syrups
+                }
+            };
+
+            cart.push(cartEntry);
+            updateCartUI();
+            closeCustomizationModal();
+        }
+
+        function updateCartQuantity(cartItemId, delta) {
+            const item = cart.find(i => i.cartItemId === cartItemId);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.cartItemId !== cartItemId);
+                }
+            }
+            updateCartUI();
+        }
+
+        function clearCart() {
+            cart = [];
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cartItemsContainer');
+            const emptyView = document.getElementById('emptyCartView');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            const badge = document.getElementById('mobileCartBadge');
+
+            if (cart.length === 0) {
+                container.innerHTML = '';
+                container.appendChild(emptyView);
+                checkoutBtn.disabled = true;
+                badge.classList.add('hidden');
+                document.getElementById('subtotalPrice').innerText = '0.00 ₴';
+                document.getElementById('taxPrice').innerText = '0.00 ₴';
+                document.getElementById('totalPrice').innerText = '0.00 ₴';
+                updateCppJsonPreview();
+                return;
+            }
+
+            container.innerHTML = '';
+            let total = 0;
+            let totalItemsCount = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.unitPrice * item.quantity;
+                total += itemTotal;
+                totalItemsCount += item.quantity;
+
+                const row = document.createElement('div');
+                row.className = "py-3 text-sm space-y-1";
+
+                let optsList = [];
+                if (item.options.size && item.options.size !== "1 порція") optsList.push(`Розмір: ${item.options.size}`);
+                if (item.options.milk && item.options.milk !== 'Немає') optsList.push(item.options.milk);
+                if (item.options.sugar > 0) optsList.push(`Цукор: ${item.options.sugar}`);
+                if (item.options.syrups && item.options.syrups.length) optsList.push(...item.options.syrups);
+
+                const optsString = optsList.join(' • ');
+
+                row.innerHTML = `
+                    <div class="flex justify-between font-semibold text-stone-200">
+                        <span>${item.title}</span>
+                        <span class="font-mono text-coffee-300">${itemTotal.toFixed(2)} ₴</span>
+                    </div>
+                    ${optsString ? `<div class="text-[11px] text-stone-400 leading-tight">${optsString}</div>` : ''}
+                    <div class="flex items-center justify-between pt-1">
+                        <span class="text-xs text-stone-500 font-mono">${item.unitPrice.toFixed(2)} ₴ / шт</span>
+                        <div class="flex items-center gap-2 bg-stone-900 border border-stone-800 rounded-lg px-2 py-0.5">
+                            <button onclick="updateCartQuantity(${item.cartItemId}, -1)" class="text-stone-400 hover:text-white px-1">-</button>
+                            <span class="font-mono text-xs font-bold text-stone-200">${item.quantity}</span>
+                            <button onclick="updateCartQuantity(${item.cartItemId}, 1)" class="text-stone-400 hover:text-white px-1">+</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            badge.innerText = totalItemsCount;
+            badge.classList.remove('hidden');
+
+            const tax = total * 0.2;
+            const subtotal = total - tax;
+
+            document.getElementById('subtotalPrice').innerText = subtotal.toFixed(2) + ' ₴';
+            document.getElementById('taxPrice').innerText = tax.toFixed(2) + ' ₴';
+            document.getElementById('totalPrice').innerText = total.toFixed(2) + ' ₴';
+
+            checkoutBtn.disabled = false;
+            updateCppJsonPreview();
+        }
+
+        function updateCppJsonPreview() {
+            const preview = document.getElementById('jsonPreview');
+            const total = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+
+            const payload = {
+                order_id: Math.floor(1000 + Math.random() * 9000),
+                customer_name: document.getElementById('customerName')?.value || "Клієнт",
+                order_type: document.querySelector('input[name="orderType"]:checked')?.value || "takeaway",
+                table_number: parseInt(document.getElementById('tableNumberInput')?.value) || 0,
+                payment_method: document.querySelector('input[name="payment"]:checked')?.value || "card",
+                total_price_uah: parseFloat(total.toFixed(2)),
+                cart_items: cart.map(i => ({
+                    item_id: i.itemId,
+                    name: i.title,
+                    unit_price: i.unitPrice,
+                    qty: i.quantity,
+                    customization: i.options
+                }))
+            };
+
+            preview.innerText = JSON.stringify(payload, null, 2);
+        }
+
+        function openCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById('checkoutModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function toggleTableInput(show) {
+            const container = document.getElementById('tableNumContainer');
+            container.classList.toggle('hidden', !show);
+        }
+
+        function handlePlaceOrder(event) {
+            event.preventDefault();
+            const name = document.getElementById('customerName').value;
+            const orderId = '#' + Math.floor(1000 + Math.random() * 9000);
+
+            closeCheckoutModal();
+
+            document.getElementById('placedName').innerText = name;
+            document.getElementById('orderIdDisplay').innerText = orderId;
+
+            const successModal = document.getElementById('successModal');
+            successModal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function resetApp() {
+            cart = [];
+            updateCartUI();
+            const successModal = document.getElementById('successModal');
+            successModal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function toggleCppPanel() {
+            const drawer = document.getElementById('cppDrawer');
+            drawer.classList.toggle('translate-x-full');
+            updateCppJsonPreview();
+        }
+
+        function toggleCartModal() {
+            const sidebar = document.querySelector('aside');
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('fixed');
+            sidebar.classList.toggle('inset-0');
+            sidebar.classList.toggle('z-40');
+            sidebar.classList.toggle('w-full');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Hp\\Desktop\\\u0433\u0456\u0442.\u0442\u0435\u0441\u0442\\project-new\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5A78FB07-20A3-41DD-94B3-DBC529B37532}|\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438.vcxproj|C:\\Users\\Hp\\Desktop\\\u0433\u0456\u0442.\u0442\u0435\u0441\u0442\\project-new\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\coffee.order.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5A78FB07-20A3-41DD-94B3-DBC529B37532}|\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438.vcxproj|solutionrelative:\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\coffee.order.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "coffee.order.cpp",
+              "DocumentMoniker": "C:\\Users\\Hp\\Desktop\\\u0433\u0456\u0442.\u0442\u0435\u0441\u0442\\project-new\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\coffee.order.cpp",
+              "RelativeDocumentMoniker": "\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\coffee.order.cpp",
+              "ToolTip": "C:\\Users\\Hp\\Desktop\\\u0433\u0456\u0442.\u0442\u0435\u0441\u0442\\project-new\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\coffee.order.cpp*",
+              "RelativeToolTip": "\u0437\u0430\u043C\u043E\u0432\u043B\u0435\u043D\u043D\u044F.\u043A\u0430\u0432\u0438\\coffee.order.cpp*",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAADQAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-10-06T20:19:25.744Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
